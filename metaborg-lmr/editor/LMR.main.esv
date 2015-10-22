@@ -1,0 +1,33 @@
+module LMR.main
+
+imports
+  LMR-Colorer
+  LMR-Completions
+  LMR-Folding
+  LMR-Menus
+  LMR-Refactorings
+  LMR-References
+  LMR-Syntax
+  LMR-Views
+
+language General properties
+  
+  name:          LMR
+  id:            org.metaborg.lmr
+  extends:       Root
+  
+  description:   "Spoofax-generated editor for the LMR language"
+  url:           http://strategoxt.org
+  
+  extensions:    lmr
+  table:         include/LMR.tbl
+  start symbols: Start
+  
+  provider:      include/lmr.ctree
+  provider:      include/lmr-java.jar
+  
+  observer:      editor-analyze (multifile)
+  
+  on save:       editor-save
+  
+  jvm opts:      -server -Xss8m -Xmx1024m
