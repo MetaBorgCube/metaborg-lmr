@@ -1,0 +1,25 @@
+module Id
+
+imports Common
+
+lexical syntax
+
+  ID = [a-z][a-zA-Z0-9\_]*
+
+lexical restrictions
+
+  ID -/- [a-zA-Z0-9\_]
+
+context-free syntax
+
+  DeclId.DeclId = <decl(<Ns>,<ID>,<INT>)>
+  RefId.RefId   = <ref(<Ns>,<ID>,<INT>)>
+
+  QualRef.QNil = <>
+  QualRef.QRef = <<QualRef>.<RefId>>
+
+  Ns.ModNs  = <mod>
+  Ns.VarNs  = <var>
+  Ns.TypeNs = <type>
+
+  U.U = <>

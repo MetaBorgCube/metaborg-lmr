@@ -1,10 +1,12 @@
 module names
 
-imports
-	
-	include/LMR
-	
-namespaces
-	
+imports src-gen/signatures/LMR-sig 
+  
+namespaces Module 
+  
 binding rules
+
+   Module(ModDeclId(name), _) :
+     defines Module name
+
 

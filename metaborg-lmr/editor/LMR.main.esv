@@ -21,7 +21,7 @@ language General properties
   
   extensions:    lmr
   table:         include/LMR.tbl
-  start symbols: Start
+  start symbols: Program
   
   provider:      include/lmr.ctree
   provider:      include/lmr-java.jar

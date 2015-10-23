@@ -1,14 +1,110 @@
 module LMR
 
-imports
-	
-	Common
+imports Common Id  
 
-context-free start-symbols
-  
-  Start
+context-free start-symbols Program
 
 context-free syntax
-  
-  Start.Dummy = <>
 
+  Program.Program = <program <ID> <{Stmt "\n"}*>>
+
+  Stmt.Module = <module <ModDeclId> { <{Stmt "\n"}*> }>
+
+  Stmt.Import = <import <ModQualRef>>
+  Stmt.Def    = <def <DefBind>>
+
+  Stmt.Rec      = <record <TypeDeclId> <Super> { <{ArgDecl ","}*> }>
+  Super.NoSuper = <>
+  Super.Super   = <extends <TypeQualRef>>
+
+context-free syntax
+
+  Expr = <(<Expr>)> {bracket}
+
+  Expr.Int   = INT
+  Expr.True  = <true>
+  Expr.False = <false>
+  
+  Expr.Add = <<Expr> + <Expr>> {left}
+  Expr.Sub = <<Expr> - <Expr>> {left, prefer}
+  Expr.Mul = <<Expr> * <Expr>> {left}
+  Expr.Div = <<Expr> / <Expr>> {left}
+  Expr.And = <<Expr> & <Expr>> {left}
+  Expr.Or  = <<Expr> | <Expr>> {left}
+  Expr.Eq  = <<Expr> == <Expr>> {left}
+  
+  Expr.If  = <if <Expr> then <Expr> else <Expr>> {longest-match}
+  Expr.Ref = <<VarQualRef>>
+  Expr.App = <<Expr> <Expr>> {left}
+
+  Expr.Fun = <fun (<ArgDecl>) { <Expr> }>
+
+  Expr.Let    = <let    <DefBind+> in <Expr>> {longest-match}
+  Expr.LetRec = <letrec <DefBind+> in <Expr>> {longest-match}
+  Expr.LetPar = <letpar <DefBind+> in <Expr>> {longest-match}
+
+  Expr.New        = <new <TypeQualRef> { <{FldBind ","}*> }>
+  FldBind.FldBind = <<VarRefId> = <Expr>> {longest-match}
+  Expr.FldAccess  = <<Expr>.<VarRefId>>
+  Expr.With       = <with <Expr> do <Expr>> {longest-match}
+
+  DefBind.DefBind = <<DefDecl> = <Expr>> {longest-match}
+
+  ArgDecl.ArgDecl = <<VarDeclId> : <TypeX>>
+
+  DefDecl.TypedDefDecl = <<VarDeclId> : <TypeX>>
+  DefDecl.DefDecl = <<VarDeclId>>
+
+context-free syntax
+
+  ModDeclId.ModDeclId     = <<BID>>
+  ModRefId.ModRefId       = <<BID>>
+  ModQualRef.ModUnqualRef = <<ModRefId>>
+  ModQualRef.ModQualRef   = <<ModQualRef>.<ModRefId>>
+
+  TypeDeclId.TypeDeclId     = <<BID>>
+  TypeRefId.TypeRefId       = <<BID>>
+  TypeQualRef.TypeUnqualRef = <<TypeRefId>>
+  TypeQualRef.TypeQualRef   = <<ModQualRef>.<TypeRefId>>
+  
+  VarDeclId.VarDeclId     = <<SID>>
+  VarRefId.VarRefId       = <<SID>>
+  VarQualRef.VarUnqualRef = <<VarRefId>>
+  VarQualRef.VarQualRef   = <<ModQualRef>.<VarRefId>>
+
+context-free syntax
+
+  TypeX.TXInt   = <Int>
+  TypeX.TXBool  = <Bool>
+  TypeX.TXArrow = [[TypeX] -> [TypeX]] {right}
+  TypeX.TXRec = <<TypeQualRef>>
+
+context-free priorities
+
+    Expr.FldAccess
+  > { left:
+      Expr.App } 
+  > { left:
+      Expr.Mul
+      Expr.Div } 
+  > { left:
+      Expr.Add
+      Expr.Sub } 
+  > Expr.Eq
+  > Expr.And
+  > Expr.Or
+  > { Expr.If
+      Expr.Fun
+      Expr.Let
+      Expr.LetRec
+      Expr.LetPar
+      Expr.With }
+  
+lexical syntax
+
+  LAYOUT = "$_" INT "$"
+  
+context-free restrictions
+
+  LAYOUT? -/- [\$]
+  
