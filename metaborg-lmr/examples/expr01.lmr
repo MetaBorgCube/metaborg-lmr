@@ -1,0 +1,5 @@
+program expr01
+
+def a = 1
+def x = 3 + 4 * a 
+

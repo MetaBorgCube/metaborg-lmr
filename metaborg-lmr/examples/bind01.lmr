@@ -1,0 +1,12 @@
+program bind01
+
+def i = 1
+
+def e = letrec 
+          inc = fun (x: Int) { x + y }
+          j = inc(i)
+          y = 3
+        in inc(i + j)
+        
+def f = inc(e)
+        

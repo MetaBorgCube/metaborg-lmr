@@ -1,13 +1,33 @@
 program test00
 
+record Point { x : Int, y : Int}
+
+record ColorPoint extends Point { c : Int }
+
+module X{
+  record Line { s : Point, e: Point}
+}
+
 module A {
   def f = fun (x : Int) { x + 1 }
+  module C {
+    def x = f(5)
+  }
+  def x = 4
+  def p = new Point { x = x, y = 2 }
+  def q = p.x
+  def p2 = p
+  def l = new X.Line { s = p, e = p}
+  def m = l.s.x
 }
 
 module B {
-  import A
-  def g = f(3)
+  import A     
+  import A.C         
+  def g = f(3) + x 
 }
 
 
 
+
+    

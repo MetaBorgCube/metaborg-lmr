@@ -34,7 +34,7 @@ context-free syntax
   Expr.Eq  = <<Expr> == <Expr>> {left}
   
   Expr.If  = <if <Expr> then <Expr> else <Expr>> {longest-match}
-  Expr.Ref = <<VarQualRef>>
+  Expr     = <<VarQualRef>>
   Expr.App = <<Expr> <Expr>> {left}
 
   Expr.Fun = <fun (<ArgDecl>) { <Expr> }>
@@ -48,12 +48,13 @@ context-free syntax
   Expr.FldAccess  = <<Expr>.<VarRefId>>
   Expr.With       = <with <Expr> do <Expr>> {longest-match}
 
-  DefBind.DefBind = <<DefDecl> = <Expr>> {longest-match}
+  DefBind.DefBind     = <<VarDeclId> = <Expr>> {longest-match}
+  DefBind.DefBindTyped = <<VarDeclId> : <TypeX> = <Expr>> {longest-match}
 
   ArgDecl.ArgDecl = <<VarDeclId> : <TypeX>>
 
-  DefDecl.TypedDefDecl = <<VarDeclId> : <TypeX>>
-  DefDecl.DefDecl = <<VarDeclId>>
+  // DefDecl.TypedDefDecl = <<VarDeclId> : <TypeX>>
+  // DefDecl.DefDecl = <<VarDeclId>>
 
 context-free syntax
 
@@ -62,13 +63,13 @@ context-free syntax
   ModQualRef.ModUnqualRef = <<ModRefId>>
   ModQualRef.ModQualRef   = <<ModQualRef>.<ModRefId>>
 
-  TypeDeclId.TypeDeclId     = <<BID>>
-  TypeRefId.TypeRefId       = <<BID>>
+  TypeDeclId                = <<BID>>
+  TypeRefId                 = <<BID>>
   TypeQualRef.TypeUnqualRef = <<TypeRefId>>
   TypeQualRef.TypeQualRef   = <<ModQualRef>.<TypeRefId>>
   
-  VarDeclId.VarDeclId     = <<SID>>
-  VarRefId.VarRefId       = <<SID>>
+  VarDeclId               = <<SID>>
+  VarRefId                = <<SID>>
   VarQualRef.VarUnqualRef = <<VarRefId>>
   VarQualRef.VarQualRef   = <<ModQualRef>.<VarRefId>>
 
@@ -78,12 +79,19 @@ context-free syntax
   TypeX.TXBool  = <Bool>
   TypeX.TXArrow = [[TypeX] -> [TypeX]] {right}
   TypeX.TXRec = <<TypeQualRef>>
+  
+  TypeS.TInt = <Int>
+  TypeS.TBool = <Bool>
+  TypeS.TArrow = [[TypeS] -> [TypeS]] {right}
+  Types.TRec = <<ID>>
+  
+  This.This = <this>
 
 context-free priorities
 
     Expr.FldAccess
   > { left:
-      Expr.App } 
+      Expr.App }   
   > { left:
       Expr.Mul
       Expr.Div } 

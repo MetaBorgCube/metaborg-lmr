@@ -1,0 +1,21 @@
+program record01
+
+record Point { x : Int, y : Int}
+
+record ColorPoint extends Point { c : Int }
+
+record Line { s : Point, e: Point}
+
+def foo : Point = 1
+
+def p = new Point { x = 1, y = 2 }
+def q = p.x
+
+def l = new Line {}
+def k = l.e.x
+
+
+
+
+
+    

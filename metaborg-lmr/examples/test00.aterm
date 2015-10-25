@@ -1,28 +1,9 @@
-Program(
-  "test00"
-, [ Module(
-      ModDeclId("A")
-    , [ Def(
-          DefBind(
-            DefDecl(VarDeclId("f"))
-          , Fun(
-              ArgDecl(VarDeclId("x"), TXInt())
-            , Add(Ref(VarUnqualRef(VarRefId("x"))), Int("1"))
-            )
-          )
-        )
-      ]
+Def(
+  DefBind(
+    "l"
+  , New(
+      TypeQualRef(ModUnqualRef(ModRefId("X")), "Line")
+    , [FldBind("s", VarUnqualRef("p")), FldBind("e", VarUnqualRef("p"))]
     )
-  , Module(
-      ModDeclId("B")
-    , [ Import(ModUnqualRef(ModRefId("A")))
-      , Def(
-          DefBind(
-            DefDecl(VarDeclId("g"))
-          , App(Ref(VarUnqualRef(VarRefId("f"))), Int("3"))
-          )
-        )
-      ]
-    )
-  ]
+  )
 )
