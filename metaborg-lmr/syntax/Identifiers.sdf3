@@ -1,0 +1,18 @@
+module Identifiers
+
+imports Common
+
+context-free syntax
+
+  ModId            = <<BID>>
+  ModRef.ModRef    = <<ModId>>
+  ModRef.ModQRef   = <<ModRef>.<ModId>>
+
+  TypeId           = <<BID>>
+  TypeRef.TypeRef  = <<TypeId>>
+  TypeRef.TypeQRef = <<ModRef>.<TypeId>>
+  
+  VarId            = <<SID>>
+  VarRef.VarRef    = <<VarId>>
+  VarRef.VarQRef   = <<ModRef>.<VarId>>
+  

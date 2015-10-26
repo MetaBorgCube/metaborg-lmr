@@ -1,0 +1,59 @@
+module Expressions
+
+imports Common Identifiers Types
+
+context-free syntax
+
+  Expr = <(<Expr>)> {bracket}
+
+  Expr.Int   = INT
+  Expr.True  = <true>
+  Expr.False = <false> 
+  
+  Expr     = <<VarRef>>
+  
+  Expr.Add = <<Expr> + <Expr>>  {left}
+  Expr.Sub = <<Expr> - <Expr>>  {left, prefer}
+  Expr.Mul = <<Expr> * <Expr>>  {left}
+  Expr.Div = <<Expr> / <Expr>>  {left}
+  Expr.And = <<Expr> & <Expr>>  {left}
+  Expr.Or  = <<Expr> | <Expr>>  {left}
+  Expr.Eq  = <<Expr> == <Expr>> {left}
+  Expr.App = <<Expr> <Expr>> {left}
+  
+  Expr.If  = <
+    if <Expr> then 
+      <Expr> 
+    else 
+      <Expr>
+  > {longest-match}
+  
+  Expr.Fun        = <fun (<ArgDecl>) { <Expr> }>
+  ArgDecl.ArgDecl = <<VarId> : <Type>>
+
+  Expr.Let    = <let    <DefBind+> in <Expr>> {longest-match}
+  Expr.LetRec = <letrec <DefBind+> in <Expr>> {longest-match}
+  Expr.LetPar = <letpar <DefBind+> in <Expr>> {longest-match}
+  
+  DefBind.DefBind      = <<VarId> = <Expr>> {longest-match}
+  DefBind.DefBindTyped = <<VarId> : <Type> = <Expr>> {longest-match}
+
+context-free priorities
+
+    { left:
+      Expr.App }   
+  > { left:
+      Expr.Mul
+      Expr.Div } 
+  > { left:
+      Expr.Add
+      Expr.Sub } 
+  > Expr.Eq
+  > Expr.And
+  > Expr.Or
+  > { Expr.If  
+      Expr.Fun
+      Expr.Let
+      Expr.LetRec
+      Expr.LetPar }
+      

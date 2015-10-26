@@ -15,11 +15,11 @@ imports
 	lib/runtime/task/-
 	lib/runtime/analysis/-
 	lib/runtime/editor/-
-	name-binding
 	check
 	generate
 	pp
-	types.generated
+ //  name-binding
+	// types.generated
 
 rules // Analysis
 	

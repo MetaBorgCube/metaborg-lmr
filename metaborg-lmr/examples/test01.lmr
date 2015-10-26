@@ -1,0 +1,10 @@
+program test01
+
+module A {
+  def x = 1
+}
+
+module B {
+  import A
+  def y = x + 1
+}

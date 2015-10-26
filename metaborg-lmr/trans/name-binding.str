@@ -69,37 +69,32 @@ rules
     ; match(implicits__|[])
 
   nabl-get-scope =
-    ?Module(ModDeclId(name), _)
+    ?Module(name, _)
     ; ![NablNsModule(), NablNsVariable(), NablNsRecord()]
 
   nabl-get-name :
-    Module(ModDeclId(name), _) -> name
+    Module(name, _) -> name
 
   nabl-name-apply(s) =
-    Module(ModDeclId(s), id)
+    Module(s, id)
 
   nabl-def-site(child-uris__, sibl-uris__, implicits__|lang__, ctx__, uniques__, uri__, states__) =
-    ?Module(ModDeclId(name), _)
+    ?Module(name, _)
     ; origin-track-forced(
         Module(
-          origin-track-forced(
-            ModDeclId(
-              nabl-def(
-                ?c-uri1__
-              , ?s-uri1__
-              | lang__
-              , ctx__
-              , uniques__
-              , uri__
-              , uri__
-              , NablNsModule()
-              , Unique()
-              , Current()
-              , [NablNsModule(), NablNsVariable(), NablNsRecord()]
-              , []
-              )
-            )
-          |
+          nabl-def(
+            ?c-uri1__
+          , ?s-uri1__
+          | lang__
+          , ctx__
+          , uniques__
+          , uri__
+          , uri__
+          , NablNsModule()
+          , Unique()
+          , Current()
+          , [NablNsModule(), NablNsVariable(), NablNsRecord()]
+          , []
           )
         , id
         )
@@ -110,52 +105,45 @@ rules
     ; match(implicits__|[])
 
   nabl-prop-site(|lang__, ctx__, uris__, states__, implicits__) =
-    ?Module(ModDeclId(name), _)
+    ?Module(name, _)
     ; (where(id)
        ; Module(
-           ModDeclId(
-             nabl-store-props(
-             | ctx__
-             , [Prop(Type(), name, [])]
-             )
+           nabl-store-props(
+           | ctx__
+           , [Prop(Type(), name, [])]
            )
          , id
          ))
     ; fail
 
   nabl-get-name :
-    Import(ModUnqualRef(ModRefId(name))) -> name
+    Import(ModRef(name)) -> name
 
   nabl-name-apply(s) =
-    Import(ModUnqualRef(ModRefId(s)))
+    Import(ModRef(s))
 
   nabl-use-site(|lang__, ctx__, uniques__, uris__, states__) =
-    ?Import(ModUnqualRef(ModRefId(name)))
+    ?Import(ModRef(name))
     ; origin-track-forced(
         Import(
           origin-track-forced(
-            ModUnqualRef(
-              origin-track-forced(
-                ModRefId(
-                  nabl-use(
-                  | lang__
-                  , ctx__
-                  , uniques__
-                  , uris__
-                  , [ <{:
-                         id
-                         ; !UseCandidate(
-                              NablNsModule()
-                            , []
-                            , Current()
-                            , False()
-                            , []
-                            )
-                       }>
-                    ]
-                  )
-                )
-              |
+            ModRef(
+              nabl-use(
+              | lang__
+              , ctx__
+              , uniques__
+              , uris__
+              , [ <{:
+                     id
+                     ; !UseCandidate(
+                          NablNsModule()
+                        , []
+                        , Current()
+                        , False()
+                        , []
+                        )
+                   }>
+                ]
               )
             )
           |
@@ -165,7 +153,7 @@ rules
       )
 
   nabl-import-site(|lang__, ctx__, uniques__, uris__, states__) =
-    ?Import(ModUnqualRef(ModRefId(name)))
+    ?Import(ModRef(name))
     ; origin-track-forced(
         nabl-import(
         | lang__
@@ -196,80 +184,70 @@ rules
       )
 
   nabl-get-name :
-    ModUnqualRef(ModRefId(name)) -> name
+    ModRef(name) -> name
 
   nabl-name-apply(s) =
-    ModUnqualRef(ModRefId(s))
+    ModRef(s)
 
   nabl-use-site(|lang__, ctx__, uniques__, uris__, states__) =
-    ?ModUnqualRef(ModRefId(name))
+    ?ModRef(name)
     ; origin-track-forced(
-        ModUnqualRef(
-          origin-track-forced(
-            ModRefId(
-              nabl-use(
-              | lang__
-              , ctx__
-              , uniques__
-              , uris__
-              , [ <{:
-                     id
-                     ; !UseCandidate(
-                          NablNsModule()
-                        , []
-                        , Current()
-                        , True()
-                        , []
-                        )
-                   }>
-                ]
-              )
-            )
-          |
+        ModRef(
+          nabl-use(
+          | lang__
+          , ctx__
+          , uniques__
+          , uris__
+          , [ <{:
+                 id
+                 ; !UseCandidate(
+                      NablNsModule()
+                    , []
+                    , Current()
+                    , True()
+                    , []
+                    )
+               }>
+            ]
           )
         )
       |
       )
 
   nabl-get-name :
-    ModQualRef(ref, ModRefId(name)) -> name
+    ModQRef(ref, name) -> name
 
   nabl-name-apply(s) =
-    ModQualRef(id, ModRefId(s))
+    ModQRef(id, s)
 
   nabl-use-site(|lang__, ctx__, uniques__, uris__, states__) =
-    ?ModQualRef(ref, ModRefId(name))
+    ?ModQRef(ref, name)
     ; origin-track-forced(
-        ModQualRef(
+        ModQRef(
           id
-        , origin-track-forced(
-            ModRefId(
-              nabl-use(
-              | lang__
-              , ctx__
-              , uniques__
-              , uris__
-              , [ <{m:
-                     m := <new-task-fixdeps(|ctx__, [])> Id(
-                                                           <get-or-create-property-task(|ctx__, Type())> ref
-                                                         )
-                     ; !UseCandidate(
-                          NablNsModule()
-                        , []
-                        , Context(
-                            NablNsModule()
-                          , m
-                          , []
-                          , Current()
-                          )
-                        , True()
-                        , []
-                        )
-                   }>
-                ]
-              )
-            )
-          |
+        , nabl-use(
+          | lang__
+          , ctx__
+          , uniques__
+          , uris__
+          , [ <{m:
+                 m := <new-task-fixdeps(|ctx__, [])> Id(
+                                                       <get-or-create-property-task(|ctx__, Type())> ref
+                                                     )
+                 ; !UseCandidate(
+                      NablNsModule()
+                    , []
+                    , Context(
+                        NablNsModule()
+                      , m
+                      , []
+                      , Current()
+                      )
+                    , True()
+                    , []
+                    )
+               }>
+            ]
           )
         )
       |
@@ -416,15 +394,15 @@ rules
     ; fail
 
   nabl-get-name :
-    VarUnqualRef(name) -> name
+    VarRef(name) -> name
 
   nabl-name-apply(s) =
-    VarUnqualRef(s)
+    VarRef(s)
 
   nabl-use-site(|lang__, ctx__, uniques__, uris__, states__) =
-    ?VarUnqualRef(name)
+    ?VarRef(name)
     ; origin-track-forced(
-        VarUnqualRef(
+        VarRef(
           nabl-use(
           | lang__
           , ctx__
@@ -666,15 +644,15 @@ rules
     ; fail
 
   nabl-get-name :
-    TypeUnqualRef(name) -> name
+    TypeRef(name) -> name
 
   nabl-name-apply(s) =
-    TypeUnqualRef(s)
+    TypeRef(s)
 
   nabl-use-site(|lang__, ctx__, uniques__, uris__, states__) =
-    ?TypeUnqualRef(name)
+    ?TypeRef(name)
     ; origin-track-forced(
-        TypeUnqualRef(
+        TypeRef(
           nabl-use(
           | lang__
           , ctx__
@@ -697,15 +675,15 @@ rules
       )
 
   nabl-get-name :
-    TypeQualRef(ref, name) -> name
+    TypeQRef(ref, name) -> name
 
   nabl-name-apply(s) =
-    TypeQualRef(id, s)
+    TypeQRef(id, s)
 
   nabl-use-site(|lang__, ctx__, uniques__, uris__, states__) =
-    ?TypeQualRef(ref, name)
+    ?TypeQRef(ref, name)
     ; origin-track-forced(
-        TypeQualRef(
+        TypeQRef(
           id
         , nabl-use(
           | lang__

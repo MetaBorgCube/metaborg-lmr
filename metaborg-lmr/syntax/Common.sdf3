@@ -4,6 +4,7 @@ lexical syntax
 
   SID            = [a-z][a-zA-Z0-9\_]*
   BID            = [A-Z][a-zA-Z0-9\_]*
+  PID            = [a-zA-Z][a-zA-Z0-9\_\-]*
   INT            = "-"? [0-9]+ 
   STRING         = "\"" StringChar* "\"" 
   StringChar     = ~[\"\n] 

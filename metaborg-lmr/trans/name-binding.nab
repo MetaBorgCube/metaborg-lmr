@@ -6,16 +6,16 @@ namespaces Program Module Variable Record This
   
 binding rules // Modules
 
-   Program(name, _) :
-     defines Program name
-     scopes Module, Variable, Record
+  Program(name, _) :
+    defines Program name
+    scopes Module, Variable, Record
   
-   Module(ModDeclId(name), _) :
-     defines Module name of type name
-     scopes Module, Variable, Record
+  Module(name, _) :
+    defines Module name of type name
+    scopes Module, Variable, Record
  
-   Import(ModUnqualRef(ModRefId(name))) :
-     imports Variable, Module, imported Variable, imported Module from Module name
+  Import(ModRef(name)) :
+    imports Variable, Module, imported Variable, imported Module from Module name
 
    // Import(ModUnqualRef(ModRefId(name))) :
    //   imports Variable, Module, imported Variable, imported Module from Module name
@@ -25,43 +25,43 @@ binding rules // Modules
    //   imports Variable, Module, imported Variable, imported Module from Module m
    //   where ref has type m
      
-   ModUnqualRef(ModRefId(name)) :
-     refers to Module name
+  ModRef(name) :
+    refers to Module name
     
-   ModQualRef(ref, ModRefId(name)) :
-     refers to Module name in Module m
-     where ref has type m
+  ModQRef(ref, name) :
+    refers to Module name in Module m
+    where ref has type m
    
 binding rules // Variables 
 
-   ArgDecl(name, ty) :
-     defines Variable name of type t
-     where ty has type t
+  ArgDecl(name, ty) :
+    defines Variable name of type t
+    where ty has type t
 
-   DefBind(name, e) :
-     defines Variable name of type t
-     where e has type t
+  DefBind(name, e) :
+    defines Variable name of type t
+    where e has type t
          
-   DefBindTyped(name, ty, e) :
-     defines Variable name of type t
-     where ty has type t
+  DefBindTyped(name, ty, e) :
+    defines Variable name of type t
+    where ty has type t
      
-   VarUnqualRef(name) : 
-     refers to Variable name
+  VarRef(name) : 
+    refers to Variable name
      
-   FldAccess(ref, name) :
-      refers to Variable name in Record r
-      where ref has type TRec(r)       
+  FldAccess(ref, name) :
+    refers to Variable name in Record r
+    where ref has type TRec(r)       
      
-   New(ref, bnds) :
-      scopes This
-      implicitly defines This This() of type t
-      where ref has type t
+  New(ref, bnds) :
+    scopes This
+    implicitly defines This This() of type t
+    where ref has type t
      
-   FldBind(name, e) :
-      refers to Variable name in Record r
-      where This() resolves to This this
-        and this has type TRec(r)
+  FldBind(name, e) :
+    refers to Variable name in Record r
+    where This() resolves to This this
+      and this has type TRec(r)
   
   LetRec(_, _) :
     scopes Variable
@@ -77,10 +77,10 @@ binding rules // Record types
     defines Record name of type TRec(name)
     scopes Variable
    
-  TypeUnqualRef(name) :
+  TypeRef(name) :
     refers to Record name
     
-  TypeQualRef(ref, name) :
+  TypeQRef(ref, name) :
     refers to Record name in Module m
-      where ref has type m
-     
+    where ref has type m
+  
