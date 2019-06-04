@@ -1,0 +1,4 @@
+/bin/
+/tests/*.out
+/tests/*.aterm
+/tests/*.result

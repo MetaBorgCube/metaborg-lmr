@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+set -eu
+
+SUNSHINE_JAR=$1
+if [ ! -f "$SUNSHINE_JAR" ]; then
+    echo "FAILURE: Cannot find file $SUNSHINE"
+    exit 1
+fi
+readonly SUNSHINE="java -jar ${SUNSHINE_JAR}"
+
+LANG_DIR=$2
+if [ ! -d "$LANG_DIR" ]; then
+    echo "FAILURE: Cannot find directory $LANG_DIR"
+    exit 1
+fi
+
+shift 2
+
+for infile in "$@"
+do
+    if ! (echo $infile | grep -s ".no.") 
+    then
+        positive=0
+	    #echo "Expect pass"
+    else
+        positive=1
+	    #echo "Expect fail"
+    fi
+
+    # run statix on the aterm
+    statix check -I src/ lmr ${infile%.*}.aterm 2>&1 >${infile%.*}.stx.out
+    stx_ok=${PIPESTATUS[0]}
+
+    # compute test result by comparison
+    if [ $stx_ok -eq $positive ]
+    then
+	echo -e "[\e[32mSUCCESS\e[0m] $infile"
+    else
+	echo -e "[\e[31mFAILURE\e[0m] $infile"
+    fi
+done
