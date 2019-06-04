@@ -6,21 +6,14 @@ dependencies:
   - org.metaborg:org.metaborg.meta.lang.esv:${metaborgVersion}
   - org.metaborg:org.metaborg.meta.lang.template:${metaborgVersion}
   - org.metaborg:org.metaborg.meta.nabl2.lang:${metaborgVersion}
-  - org.metaborg:dynsem:${metaborgVersion}
   source:
   - org.metaborg:meta.lib.spoofax:${metaborgVersion}
   - org.metaborg:org.metaborg.meta.nabl2.shared:${metaborgVersion}
   - org.metaborg:org.metaborg.meta.nabl2.runtime:${metaborgVersion}
-pardonedLanguages:
-- EditorService
-- Stratego-Sugar
-- SDF
-debug:
-  typesmart: false
 language:
   sdf:
     pretty-print: LMR
-    sdf2table: c
+    sdf2table: java
     placeholder:
       prefix: "$"
   stratego:

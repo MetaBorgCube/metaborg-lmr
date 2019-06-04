@@ -10,7 +10,7 @@ context-free syntax
   Expr.True  = <true>
   Expr.False = <false> 
   
-  Expr     = <<VarRef>>
+  Expr.Var   = <<VarRef>>
   
   Expr.Add = <<Expr> + <Expr>>  {left}
   Expr.Sub = <<Expr> - <Expr>>  {left, prefer}
