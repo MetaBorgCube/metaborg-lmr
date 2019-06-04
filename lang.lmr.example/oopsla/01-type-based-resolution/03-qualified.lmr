@@ -1,0 +1,36 @@
+module A {
+  module B {
+  
+    def r1 = new R {}    
+    def r2 = new A.R {}
+
+    def r3 = r1
+    def r4 = r2  
+    
+    def r = ifz 0 then r1 else r2
+    
+    module C {
+      record R {}
+    }
+  }
+ 
+  record R {}
+ 
+}
+
+module B {
+  module C {
+    import A
+    import B
+    
+    record R {}
+    
+    def r1 = new R {}
+    def r2 = new C.R {}
+    def r3 = new B.C.R {}
+    def r4 = new A.B.C.R {}
+    
+    def error = ifz 0 then r1 else r2
+    def r = ifz 0 then r2 else r3
+  }
+}

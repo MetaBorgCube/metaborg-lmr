@@ -1,0 +1,11 @@
+/* Recursive imports */
+
+module A {
+  import B
+  def a : Int = b
+}
+
+module B {
+  import A
+  def b = a
+}

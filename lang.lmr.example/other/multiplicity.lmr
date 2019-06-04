@@ -1,0 +1,8 @@
+def a = 1
+def b = a
+
+def c = 1
+def c = 2
+def d = c // ERROR
+
+def f = e // ERROR

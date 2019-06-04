@@ -1,0 +1,10 @@
+def a = 0
+def b = 1
+def c = 2
+
+def x = letpar
+  a = c
+  b = a
+  c = b
+in
+  a + b + c

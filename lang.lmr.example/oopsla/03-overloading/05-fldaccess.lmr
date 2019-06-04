@@ -1,0 +1,8 @@
+record A { f : Int }
+record B { f : Bool }
+
+def x = new A { f = 1 }
+def x = new B { f = true }
+
+def fa : Int = x.f
+def fb : Bool = x.f

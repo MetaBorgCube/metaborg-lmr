@@ -1,0 +1,33 @@
+module LMR
+
+imports Common Identifiers Records Expressions
+
+context-free start-symbols Program Expr
+
+context-free syntax
+
+  Program.Program = <
+    <Header?>
+    
+    <{Decl "\n\n"}*>
+  >
+
+  Header = <program <PID>>
+
+  Decl.Module = <
+    module <ModId> { 
+      <{Decl "\n"}*> 
+    }
+  >
+
+  Decl.Import = <import <ModRef>>
+  Decl.Def    = <def <DefBind>>
+
+lexical syntax
+
+  LAYOUT = "$_" INT "$"
+  
+context-free restrictions
+
+  LAYOUT? -/- [\$]
+  

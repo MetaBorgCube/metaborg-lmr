@@ -1,9 +1,0 @@
-Def(
-  DefBind(
-    "l"
-  , New(
-      TypeQualRef(ModUnqualRef(ModRefId("X")), "Line")
-    , [FldBind("s", VarUnqualRef("p")), FldBind("e", VarUnqualRef("p"))]
-    )
-  )
-)

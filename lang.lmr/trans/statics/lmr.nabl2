@@ -1,0 +1,11 @@
+module statics/lmr
+
+imports
+
+  signatures/-
+
+rules
+
+  init ^ (s) := new s.
+
+  [[ _ ^ (s) ]].

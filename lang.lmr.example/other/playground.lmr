@@ -1,0 +1,6 @@
+record A {}
+record B extends A {}
+record C extends A {}
+
+// def f = fun (x : Int) { ifz x then fun (x : Int) { f x } else fun (x : Int) { f x } }
+def f = fun (x : Int) { f x }

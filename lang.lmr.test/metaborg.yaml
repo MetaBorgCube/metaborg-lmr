@@ -1,0 +1,9 @@
+---
+id: org.metaborg:lang.lmr.test:0.1.0-SNAPSHOT
+name: LMR
+dependencies:
+  compile:
+  - org.metaborg:lang.lmr:0.1.0-SNAPSHOT
+  - org.metaborg:org.metaborg.meta.lang.spt:${metaborgVersion}
+build:
+  useBuildSystemSpec: true

@@ -1,0 +1,8 @@
+record A { f : A }
+record B extends A {}
+record C extends A {}
+
+def f = (ifz 0 then new B {} else new C {}).f
+
+def a1 = new A { f = new B {} }
+def a2 = new A { f = new C {} }

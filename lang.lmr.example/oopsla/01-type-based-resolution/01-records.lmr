@@ -1,0 +1,11 @@
+record A { f : Int }
+record B { f : A }
+record C { f : B }
+
+def a = new A { f = 0 }
+def b = new B { f = a }
+def c = new C { f = b }
+def f = 3
+
+def allf = c.f.f.f + f
+

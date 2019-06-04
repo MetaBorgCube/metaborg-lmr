@@ -1,0 +1,5 @@
+record A {}
+record B {}
+def x = new A {}
+def x = new B {}
+def a : A = x

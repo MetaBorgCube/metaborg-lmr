@@ -1,0 +1,13 @@
+---
+id: org.metaborg:lang.lmr.example:0.1.0-SNAPSHOT
+name: LMR
+dependencies:
+  compile:
+  - org.metaborg:lang.lmr:0.1.0-SNAPSHOT
+debug:
+  typesmart: false
+runtime:
+  nabl2:
+    debug: analysis files
+build:
+  useBuildSystemSpec: true

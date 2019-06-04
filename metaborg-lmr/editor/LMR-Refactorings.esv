@@ -1,7 +1,0 @@
-module LMR-Refactorings
-
-imports LMR-Refactorings.generated
-
-refactorings
-
-  text reconstruction : construct-textual-change

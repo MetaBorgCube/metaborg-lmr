@@ -1,0 +1,12 @@
+record A { f: Int }
+record B { g: Int }
+
+def a = new A { f = 0 }
+def b = new B { g = 1 }
+
+def f = 2
+def g = 3
+
+def x = with a do f + g
+def y = with b do f + g
+

@@ -1,0 +1,8 @@
+module B {
+  module C {
+    def c = D.f
+  }
+  module D {
+    def f = 1
+  }
+}

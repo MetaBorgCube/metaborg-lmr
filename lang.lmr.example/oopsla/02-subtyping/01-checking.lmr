@@ -1,0 +1,14 @@
+record A {}
+record B extends A {}
+
+def f: A -> A = fun (x : A) { x } 
+def g: A -> A = fun (x : A) { new B {} }
+
+def a1: A = new B {}
+def b1: B = new B {}
+def a2: A = b1
+
+def a3: A = f a1
+def b2: B = f b1
+def a4: A = g a1
+def b3: A = f b1

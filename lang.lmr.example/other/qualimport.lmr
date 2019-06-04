@@ -1,0 +1,15 @@
+/* Qualified names */
+
+module A {
+  module B {
+    module C {
+      module D {
+        def a = 42
+      }
+    }
+  }
+}
+
+import A.B.C.D
+
+def answer = a

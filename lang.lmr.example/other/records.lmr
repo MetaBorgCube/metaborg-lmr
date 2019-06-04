@@ -1,0 +1,9 @@
+/* Records */
+
+record A { a : Int -> Int , b : Int }
+record B extends A { c : A }
+
+def x = 42
+def o = new B { b = x + x, c = new A { b = 1 } }
+def a = o.a
+def b = o.c

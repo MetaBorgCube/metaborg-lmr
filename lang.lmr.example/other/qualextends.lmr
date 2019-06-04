@@ -1,0 +1,15 @@
+/* Qualified names */
+
+module A {
+  module B {
+    module C {
+      module D {
+        record R { x : Int }
+      }
+    }
+  }
+}
+
+record R extends A.B.C.D.R {}
+
+def r = new R { x = 1 }

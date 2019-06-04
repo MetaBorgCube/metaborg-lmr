@@ -1,0 +1,8 @@
+record A {}
+record B {}
+
+def f = fun (i : Int) { new A {} }
+def f = fun (i : Int) { new B {} }
+
+def a : A = f 1
+def b : B = f 1
