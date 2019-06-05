@@ -4,15 +4,9 @@ imports Identifiers
 
 context-free syntax
 
-  Type.TXInt    = <Int>
-  Type.TXBool   = <Bool>
-  Type.TXArrow  = [[Type] -> [Type]] {right}
-  Type.TXRec    = <<TypeRef>>
-  
-  TypeS.TInt   = <Int>
-  TypeS.TBool  = <Bool>
-  TypeS.TArrow = [[TypeS] -> [TypeS]] {right}
-  Types.TRec   = <<TypeId>>
-  
-  This.This = <this>
+  Type.TInt    = <Int>
+  Type.TBool   = <Bool>
+  Type.TArrow  = [[Type] -> [Type]] {right}
+  Type.TRec    = <<TypeRef>>
+  Type         = <(<Type>)> {bracket}
 

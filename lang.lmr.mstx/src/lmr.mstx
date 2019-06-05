@@ -164,15 +164,15 @@ arg-decl(s, d, ty) :- d match
   }.
 
 type(s, tyann, ty) :- tyann match
-  { TXInt() ->
+  { TInt() ->
       false
-  | TXBool() ->
+  | TBool() ->
       false
-  | TXArrow(tyann1, tyann2) -> {ty1, ty2}
+  | TArrow(tyann1, tyann2) -> {ty1, ty2}
       type(s, tyann1, ty1),
       type(s, tyann2, ty2),
       ty == FUN(ty1, ty2)
-  | TXRec(r) -> {s_rec}
+  | TRec(r) -> {s_rec}
       type-ref(s, r),
       ty == REC(s_rec),
       false
