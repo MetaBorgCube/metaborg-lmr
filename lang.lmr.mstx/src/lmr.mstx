@@ -155,11 +155,12 @@ expr(s, e, ty) :- e match
       datum(p, (x, ty)),
       ty == REC(s_rec),
       fld-binds(s, bs, s_rec)
-  | FldAccess(e, x) -> {s_rec, flds, xflds, p}
+  | FldAccess(e, x) -> {s_rec, flds, xflds, xflds', p}
       expr(s, e, REC(s_rec)),
       query s `EXT* `FLD as flds,
       filter flds ((x', _) where x' == x) xflds,
-      only(xflds, p),
+      min-refs(xflds, xflds'),
+      only(xflds', p),
       datum(p, (x, ty))
   | With(e1, e2) -> {s_with, s_rec}
       expr(s, e1, REC(s_rec)),
@@ -174,11 +175,12 @@ fld-binds(s, bs, s_rec) :- bs match
   }.
 
 fld-bind(s, b, s_rec) :- b match
-  { FldBind(x, e) -> {ty, flds, xflds, p}
+  { FldBind(x, e) -> {ty, flds, xflds, xflds', p}
       expr(s, e, ty),
       query s_rec `EXT* `FLD as flds,
       filter flds ((x', _) where x' == x) xflds,
-      only(xflds, p),
+      min-refs(xflds, xflds'),
+      only(xflds', p),
       datum(p, (x, ty)),
       true // subtyping
   }.
@@ -217,10 +219,11 @@ type(s, tyann, ty) :- tyann match
   }.
 
 mod-ref(s, r, p) :- r match
-  { ModRef(x) -> {mods, xmods}
+  { ModRef(x) -> {mods, xmods, xmods'}
       query s `LEX*`IMP? `MOD as mods,
       filter mods ((x', _) where x' == x) xmods,
-      only(xmods, p)
+      min-refs(xmods, xmods'),
+      only(xmods', p)
   | ModQRef(r, x) -> {p_mod, s_mod, mods, xmods}
       mod-ref(s, r, p_mod),
       tgt(p_mod, s_mod),
@@ -230,10 +233,11 @@ mod-ref(s, r, p) :- r match
   }.
 
 type-ref(s, r, p) :- r match
-  { TypeRef(x) -> {recs, xrecs}
+  { TypeRef(x) -> {recs, xrecs, xrecs'}
       query s `LEX*`IMP? `REC as recs,
       filter recs ((x', _) where x' == x) xrecs,
-      only(xrecs, p)
+      min-refs(xrecs, xrecs'),
+      only(xrecs', p)
   | TypeQRef(r, x) -> {p_mod, s_mod, recs, xrecs}
       mod-ref(s, r, p_mod),
       tgt(p_mod, s_mod),
@@ -243,10 +247,11 @@ type-ref(s, r, p) :- r match
   }.
 
 var-ref(s, r, p) :- r match
-  { VarRef(x) -> {vars, xvars}
+  { VarRef(x) -> {vars, xvars, xvars'}
       query s `LEX*(`EXT*|`IMP?) `VAR as vars,
       filter vars ((x', _) where x' == x) xvars,
-      only(xvars, p)
+      min-refs(xvars, xvars'),
+      only(xvars', p)
   | VarQRef(r, x) -> {p_mod, s_mod, vars, xvars}
       mod-ref(s, r, p_mod),
       tgt(p_mod, s_mod),
@@ -254,3 +259,10 @@ var-ref(s, r, p) :- r match
       filter vars ((x', _) where x' == x) xvars,
       only(xvars, p)
   }.
+
+min-refs(z, z') :-
+  min z lexico( `MOD < `LEX, `MOD < `IMP, `MOD < `EXT,
+                `REC < `LEX, `REC < `IMP, `REC < `EXT,
+                `VAR < `LEX, `VAR < `IMP, `VAR < `EXT,
+                `IMP < `LEX, `EXT < `LEX
+              ) z'.
