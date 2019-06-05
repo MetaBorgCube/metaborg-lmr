@@ -1,3 +1,6 @@
+import stdlib.paths
+import stdlib.sets
+
 main(p) :- p match
   { Program(h, ds) -> {s}
       new s,
@@ -15,12 +18,12 @@ decl(s, d) :- d match
       s -[ `MOD ]-> s_mod,
       s_mod -[ `LEX ]-> s,
       decls(s_mod, ds)
-  | Import(r) -> {s_mod}
-      mod-ref(s, r),
-      false,
+  | Import(r) -> {p, x, s_mod}
+      mod-ref(s, r, p),
+      datum(p, (x, s_mod)),
       s -[ `IMP ]-> s_mod
   | Def(b) ->
-      def-bind(s, b)
+      par-bind(s, b, s)
   | Rec(x, sup, ds) -> {s_rec}
       new s_rec -> (x, REC(s_rec)),
       s -[ `REC ]-> s_rec,
@@ -31,18 +34,26 @@ decl(s, d) :- d match
 super(s, sup, s_rec) :- sup match
   { NoSuper() ->
       true
-  | Super(r) -> {s_sup}
-      type-ref(s, r),
-      false,
+  | Super(r) -> {p, x, s_sup}
+      type-ref(s, r, p),
+      datum(p, (x, REC(s_sup))),
       s_rec -[ `EXT ]-> s_sup
   }.
 
-def-binds(s, bs) :- bs match
-  { []   -> true
-  | b:bs -> def-bind(s, b), def-binds(s, bs)
+seq-binds(s, bs, s_def) :- bs match
+  { []   ->
+      s_def -[ `LEX ]-> s
+  | b:[] -> {}
+      s_def -[ `LEX ]-> s,
+      seq-bind(s, b, s_def)
+  | b:bs -> {s_def'}
+      new s_def',
+      s_def' -[ `LEX ]-> s,
+      seq-bind(s, b, s_def'),
+      seq-binds(s_def', bs, s_def)
   }.
 
-def-bind(s, b) :- b match
+seq-bind(s, b, s_def) :- b match
   { DefBind(x, e) -> {s_var, ty}
       new s_var -> (x, ty),
       s -[ `VAR ]-> s_var,
@@ -54,15 +65,33 @@ def-bind(s, b) :- b match
       expr(s, e, ty)
   }.
 
+par-binds(s, bs, s_def) :- bs match
+  { []   -> true
+  | b:bs -> par-bind(s, b, s_def), par-binds(s, bs, s_def)
+  }.
+
+par-bind(s, b, s_def) :- b match
+  { DefBind(x, e) -> {s_var, ty}
+      new s_var -> (x, ty),
+      s_def -[ `VAR ]-> s_var,
+      expr(s, e, ty)
+  | DefBindTyped(x, tyann, e) -> {s_var, ty}
+      new s_var -> (x, ty),
+      s_def -[ `VAR ]-> s_var,
+      type(s, tyann, ty),
+      expr(s, e, ty)
+  }.
+
 expr(s, e, ty) :- e match
   { Int(_) ->
-      false
+      ty == INT()
   | True() ->
-      false
+      ty == BOOL()
   | False() ->
-      false
-  | Var(r) ->
-      false
+      ty == BOOL()
+  | Var(r) -> {p, x}
+      var-ref(s, r, p),
+      datum(p, (x, ty))
   | Add(e1, e2) ->
       expr(s, e1, INT()),
       expr(s, e2, INT()),
@@ -89,14 +118,17 @@ expr(s, e, ty) :- e match
       ty == BOOL()
   | Eq(e1, e2) ->
       expr(s, e1, ty),
-      expr(s, e2, ty)
+      expr(s, e2, ty),
+      true // subtyping
   | App(e1, e2) -> {ty1}
       expr(s, e1, FUN(ty1, ty)),
-      expr(s, e2, ty1)
+      expr(s, e2, ty1),
+      true // subtyping
   | If(e1, e2, e3) ->
       expr(s, e1, BOOL()),
       expr(s, e2, ty),
-      expr(s, e3, ty)
+      expr(s, e3, ty),
+      true // subtyping
   | Fun(d, e) -> {s_fun, ty1, ty2}
       new s_fun,
       s_fun -[ `LEX ]-> s,
@@ -106,30 +138,29 @@ expr(s, e, ty) :- e match
   | Let(bs, e) -> {s_let}
       new s_let,
       s_let -[ `LEX ]-> s,
-      def-binds(s, bs),
-      expr(s, e, ty)
+      seq-binds(s, bs, s_let),
+      expr(s_let, e, ty)
   | LetRec(bs, e) -> {s_let}
       new s_let,
       s_let -[ `LEX ]-> s,
-      def-binds(s, bs),
-      expr(s, e, ty)
+      par-binds(s_let, bs, s_let),
+      expr(s_let, e, ty)
   | LetPar(bs, e) -> {s_let}
       new s_let,
       s_let -[ `LEX ]-> s,
-      def-binds(s, bs),
-      expr(s, e, ty)
-  | New(x, bs) -> {recs, xrecs, p}
-      query s `REC as recs,
-      filter recs ((x', _) where x' == x) xrecs,
-      only(xrecs, p),
-      false,
-      fld-binds(s, bs)
+      par-binds(s, bs, s_let),
+      expr(s_let, e, ty)
+  | New(r, bs) -> {p, x, s_rec}
+      type-ref(s, r, p),
+      datum(p, (x, ty)),
+      ty == REC(s_rec),
+      fld-binds(s, bs, s_rec)
   | FldAccess(e, x) -> {s_rec, flds, xflds, p}
       expr(s, e, REC(s_rec)),
-      query s `FLD as flds,
+      query s `EXT* `FLD as flds,
       filter flds ((x', _) where x' == x) xflds,
       only(xflds, p),
-      false
+      datum(p, (x, ty))
   | With(e1, e2) -> {s_with, s_rec}
       expr(s, e1, REC(s_rec)),
       new s_with,
@@ -137,14 +168,19 @@ expr(s, e, ty) :- e match
       expr(s_with, e2, ty)
   }.
 
-fld-binds(s, bs) :- bs match
+fld-binds(s, bs, s_rec) :- bs match
   { []   -> true
-  | b:bs -> fld-bind(s, b), fld-binds(s, bs)
+  | b:bs -> fld-bind(s, b, s_rec), fld-binds(s, bs, s_rec)
   }.
 
-fld-bind(s, b) :- b match
-  { FldBind(x, e) -> {ty}
-      expr(s, e, ty)
+fld-bind(s, b, s_rec) :- b match
+  { FldBind(x, e) -> {ty, flds, xflds, p}
+      expr(s, e, ty),
+      query s_rec `EXT* `FLD as flds,
+      filter flds ((x', _) where x' == x) xflds,
+      only(xflds, p),
+      datum(p, (x, ty)),
+      true // subtyping
   }.
 
 fld-decls(s, ds) :- ds match
@@ -153,48 +189,68 @@ fld-decls(s, ds) :- ds match
   }.
 
 fld-decl(s, d) :- d match
-  { ArgDecl(x, tyann) -> {ty}
+  { ArgDecl(x, tyann) -> {ty, s_fld}
       type(s, tyann, ty),
-      false
+      new s_fld -> (x, ty),
+      s -[ `VAR ]-> s_fld
   }.
 
 arg-decl(s, d, ty) :- d match
-  { ArgDecl(x, tyann) ->
-      type(s, tyann, ty)
+  { ArgDecl(x, tyann) -> {s_var}
+      type(s, tyann, ty),
+      new s_var -> (x, ty),
+      s -[ `VAR ]-> s_var
   }.
 
 type(s, tyann, ty) :- tyann match
   { TInt() ->
-      false
+      ty == INT()
   | TBool() ->
-      false
+      ty == BOOL()
   | TArrow(tyann1, tyann2) -> {ty1, ty2}
       type(s, tyann1, ty1),
       type(s, tyann2, ty2),
       ty == FUN(ty1, ty2)
-  | TRec(r) -> {s_rec}
-      type-ref(s, r),
-      ty == REC(s_rec),
-      false
+  | TRec(r) -> {p, x, ty}
+      type-ref(s, r, p),
+      datum(p, (x, ty))
   }.
 
-mod-ref(s, r) :- r match
-  { ModRef(x) ->
-      false
-  | ModQRef(r, x) ->
-      false
+mod-ref(s, r, p) :- r match
+  { ModRef(x) -> {mods, xmods}
+      query s `LEX*`IMP? `MOD as mods,
+      filter mods ((x', _) where x' == x) xmods,
+      only(xmods, p)
+  | ModQRef(r, x) -> {p_mod, s_mod, mods, xmods}
+      mod-ref(s, r, p_mod),
+      tgt(p_mod, s_mod),
+      query s `MOD as mods,
+      filter mods ((x', _) where x' == x) xmods,
+      only(xmods, p)
   }.
 
-type-ref(s, r) :- r match
-  { TypeRef(x) ->
-      false
-  | TypeQRef(r, x) ->
-      false
+type-ref(s, r, p) :- r match
+  { TypeRef(x) -> {recs, xrecs}
+      query s `LEX*`IMP? `REC as recs,
+      filter recs ((x', _) where x' == x) xrecs,
+      only(xrecs, p)
+  | TypeQRef(r, x) -> {p_mod, s_mod, recs, xrecs}
+      mod-ref(s, r, p_mod),
+      tgt(p_mod, s_mod),
+      query s `REC as recs,
+      filter recs ((x', _) where x' == x) xrecs,
+      only(xrecs, p)
   }.
 
-var-ref(s, r) :- r match
-  { VarRef(x) ->
-      false
-  | VarQRef(r, x) ->
-      false
+var-ref(s, r, p) :- r match
+  { VarRef(x) -> {vars, xvars}
+      query s `LEX*(`EXT*|`IMP?) `VAR as vars,
+      filter vars ((x', _) where x' == x) xvars,
+      only(xvars, p)
+  | VarQRef(r, x) -> {p_mod, s_mod, vars, xvars}
+      mod-ref(s, r, p_mod),
+      tgt(p_mod, s_mod),
+      query s `VAR as vars,
+      filter vars ((x', _) where x' == x) xvars,
+      only(xvars, p)
   }.
