@@ -21,7 +21,7 @@ lexical syntax
   NewLineEOF     = EOF 
   EOF            =  
 
-  SID            = "new" | "ifz" | "then" | "else"
+  SID            = "new" | "if" | "then" | "else"
                  | "fun" | "with" | "do" | "module"
                  | "import" | "extends" | "def" | "fix" 
                  | "record" | "let" | "letrec" | "letpar"
