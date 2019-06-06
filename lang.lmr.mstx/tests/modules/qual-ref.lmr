@@ -1,0 +1,4 @@
+module A {
+  def x = 5
+}
+def y = A.x

@@ -1,0 +1,2 @@
+def a = 0
+def b = a + c

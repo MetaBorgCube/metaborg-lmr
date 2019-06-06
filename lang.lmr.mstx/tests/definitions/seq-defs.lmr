@@ -1,0 +1,3 @@
+def a = 0
+def b = a + 5
+def c = a + b

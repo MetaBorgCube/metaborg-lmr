@@ -1,0 +1,6 @@
+module A {
+  def y = x
+  module B {
+    def x = 5
+  }
+}

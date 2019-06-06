@@ -60,7 +60,7 @@ lang: $(LANG_ARCHIVE) sunshine
 #	@./tests/run $< | tee $@ | grep -i "failure\|success"
 
 test: $(TEST_ATERMS)
-	@./tests/run $(SUNSHINE_JAR) $(LANG_DIR) $<
+	@./tests/run $(SUNSHINE_JAR) $(LANG_DIR) $^
 
 #test-results: 
 #	find . -iname '*.result' -exec sh -c "cat {} | grep -i 'failure\|success'" \;

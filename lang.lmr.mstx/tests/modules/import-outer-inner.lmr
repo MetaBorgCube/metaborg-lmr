@@ -1,0 +1,11 @@
+module A {
+  module B {
+    module C {
+      def x = 5
+    }
+  }
+  module D {
+    import B.C
+    def y = x
+  }
+}

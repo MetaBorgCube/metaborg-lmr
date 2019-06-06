@@ -116,10 +116,11 @@ expr(s, e, ty) :- e match
       expr(s, e1, BOOL()),
       expr(s, e2, BOOL()),
       ty == BOOL()
-  | Eq(e1, e2) ->
-      expr(s, e1, ty),
-      expr(s, e2, ty),
-      true // subtyping
+  | Eq(e1, e2) -> {ty'}
+      expr(s, e1, ty'),
+      expr(s, e2, ty'),
+      true, // subtyping
+      ty == BOOL()
   | App(e1, e2) -> {ty1}
       expr(s, e1, FUN(ty1, ty)),
       expr(s, e2, ty1),
@@ -132,8 +133,8 @@ expr(s, e, ty) :- e match
   | Fun(d, e) -> {s_fun, ty1, ty2}
       new s_fun,
       s_fun -[ `LEX ]-> s,
-      arg-decl(s, d, ty1),
-      expr(s, e, ty2),
+      arg-decl(s_fun, d, ty1),
+      expr(s_fun, e, ty2),
       ty == FUN(ty1, ty2)
   | Let(bs, e) -> {s_let}
       new s_let,
@@ -227,7 +228,7 @@ mod-ref(s, r, p) :- r match
   | ModQRef(r, x) -> {p_mod, s_mod, mods, xmods}
       mod-ref(s, r, p_mod),
       tgt(p_mod, s_mod),
-      query s `MOD as mods,
+      query s_mod `MOD as mods,
       filter mods ((x', _) where x' == x) xmods,
       only(xmods, p)
   }.
@@ -241,7 +242,7 @@ type-ref(s, r, p) :- r match
   | TypeQRef(r, x) -> {p_mod, s_mod, recs, xrecs}
       mod-ref(s, r, p_mod),
       tgt(p_mod, s_mod),
-      query s `REC as recs,
+      query s_mod `REC as recs,
       filter recs ((x', _) where x' == x) xrecs,
       only(xrecs, p)
   }.
@@ -255,7 +256,7 @@ var-ref(s, r, p) :- r match
   | VarQRef(r, x) -> {p_mod, s_mod, vars, xvars}
       mod-ref(s, r, p_mod),
       tgt(p_mod, s_mod),
-      query s `VAR as vars,
+      query s_mod `VAR as vars,
       filter vars ((x', _) where x' == x) xvars,
       only(xvars, p)
   }.

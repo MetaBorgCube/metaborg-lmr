@@ -1,4 +1,4 @@
 /bin/
-/tests/*.out
-/tests/*.aterm
-/tests/*.result
+*.out
+*.aterm
+*.result

@@ -19,7 +19,9 @@ shift 2
 
 for infile in "$@"
 do
-    if ! (echo $infile | grep -s ".no.") 
+    stxoutfile=${infile%.*}.stx.out
+
+    if ! (echo $infile | grep -s ".no." >&/dev/null)
     then
         positive=0
 	    #echo "Expect pass"
@@ -29,14 +31,13 @@ do
     fi
 
     # run statix on the aterm
-    statix check -I src/ lmr ${infile%.*}.aterm 2>&1 >${infile%.*}.stx.out
-    stx_ok=${PIPESTATUS[0]}
+    statix check -I src/ lmr ${infile} 2>&1 >${stxoutfile} && stx_ok=0 || stx_ok=1
 
     # compute test result by comparison
     if [ $stx_ok -eq $positive ]
     then
-	echo -e "[\e[32mSUCCESS\e[0m] $infile"
+        echo -e "[\e[32mSUCCESS\e[0m] $infile"
     else
-	echo -e "[\e[31mFAILURE\e[0m] $infile"
+        echo -e "[\e[31mFAILURE\e[0m] $infile (see $stxoutfile)"
     fi
 done

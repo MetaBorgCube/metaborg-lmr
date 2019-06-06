@@ -1,0 +1,2 @@
+def fac = letrec f = fun(n : Int) { if n == 0 then 1 else n * f(n - 1) } in f
+def x = fac 5
