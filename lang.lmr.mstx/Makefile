@@ -13,7 +13,7 @@ SPEC         =  src/java.mstx
 MAVEN_OPTS   = "-Xms512m -Xmx1024m -Xss16m"
 MAVEN        = MAVEN_OPTS=$(MAVEN_OPTS) mvn
 SUNSHINE     = java -jar $(SUNSHINE_JAR)
-PARSE        = $(SUNSHINE) parse -l $(LANG_DIR) -p . -i 
+PARSE        = $(SUNSHINE) parse -l $(LANG_DIR) -p . -i
 STATIX       = statix $(SPEC)
 
 ## project paths
@@ -55,12 +55,12 @@ $(LANG_ARCHIVE): $(LANG_DIR)
 
 sunshine: $(SUNSHINE_JAR)
 
-lang: $(LANG_ARCHIVE)
+lang: $(LANG_ARCHIVE) $(SUNSHINE_JAR)
 
 test: $(TEST_ATERMS) $(SUNSHINE_JAR) $(LANG_ARCHIVE)
 	@./tests/run $(SUNSHINE_JAR) $(LANG_DIR) $^
 
-#test-results: 
+#test-results:
 #	find . -iname '*.result' -exec sh -c "cat {} | grep -i 'failure\|success'" \;
 
 ## Cleaning
