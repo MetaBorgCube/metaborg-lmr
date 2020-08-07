@@ -4,7 +4,7 @@ LANG_ARCHIVE =  $(LANG_DIR)/target/lang.lmr-0.1.0-SNAPSHOT.spoofax-language
 LANG_EXT     = lmr
 
 ## spoofax paths
-SPX_VERSION  =  2.5.6
+SPX_VERSION  =  2.5.11
 SUNSHINE_URL =  http://artifacts.metaborg.org/service/local/repositories/releases/content/org/metaborg/org.metaborg.sunshine2/$(SPX_VERSION)/org.metaborg.sunshine2-$(SPX_VERSION).jar
 SUNSHINE_JAR =  bin/org.metaborg.sunshine2-$(SPX_VERSION).jar
 SPEC         =  src/java.mstx
