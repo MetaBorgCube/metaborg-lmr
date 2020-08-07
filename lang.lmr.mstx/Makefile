@@ -53,6 +53,8 @@ $(LANG_ARCHIVE): $(LANG_DIR)
 #%.result: %.$(LANG_EXT) src/
 #	@./tests/run $< | tee $@ | grep -i "failure\|success"
 
+sunshine: $(SUNSHINE_JAR)
+
 lang: $(LANG_ARCHIVE)
 
 test: $(TEST_ATERMS) $(SUNSHINE_JAR) $(LANG_ARCHIVE)
