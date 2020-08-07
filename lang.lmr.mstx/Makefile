@@ -23,7 +23,7 @@ TEST_SOURCES = $(shell find $(TEST_DIR) -iname $(TESTRE))
 TEST_ATERMS  = $(TEST_SOURCES:%.$(LANG_EXT)=%.aterm)
 TEST_TARGETS = $(TEST_SOURCES:%.$(LANG_EXT)=%.result)
 
-.PHONY: all test
+.PHONY: all test lang
 .PRECIOUS: %.aterm
 
 ## Default target
@@ -39,9 +39,6 @@ bin:
 $(SUNSHINE_JAR): bin
 	curl $(SUNSHINE_URL) -o $(SUNSHINE_JAR)
 
-# ensure that spoofax sunshine is available
-sunshine: $(SUNSHINE_JAR)
-
 # compile the java frontend
 $(LANG_ARCHIVE): $(LANG_DIR)
 	cd $(LANG_DIR) && $(MAVEN) verify
@@ -56,7 +53,9 @@ $(LANG_ARCHIVE): $(LANG_DIR)
 #%.result: %.$(LANG_EXT) src/
 #	@./tests/run $< | tee $@ | grep -i "failure\|success"
 
-test: $(TEST_ATERMS) sunshine $(LANG_ARCHIVE)
+lang: $(LANG_ARCHIVE)
+
+test: $(TEST_ATERMS) $(SUNSHINE_JAR) $(LANG_ARCHIVE)
 	@./tests/run $(SUNSHINE_JAR) $(LANG_DIR) $^
 
 #test-results: 
