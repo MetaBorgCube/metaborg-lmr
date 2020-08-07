@@ -59,7 +59,7 @@ lang: $(LANG_ARCHIVE) sunshine
 #%.result: %.$(LANG_EXT) src/
 #	@./tests/run $< | tee $@ | grep -i "failure\|success"
 
-test: $(TEST_ATERMS)
+test: $(TEST_ATERMS) sunshine
 	@./tests/run $(SUNSHINE_JAR) $(LANG_DIR) $^
 
 #test-results: 
