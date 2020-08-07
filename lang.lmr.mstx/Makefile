@@ -46,9 +46,6 @@ sunshine: $(SUNSHINE_JAR)
 $(LANG_ARCHIVE): $(LANG_DIR)
 	cd $(LANG_DIR) && $(MAVEN) verify
 
-# ensure the spoofax language is compiled and available
-lang: $(LANG_ARCHIVE) sunshine
-
 ## Testing
 
 # Turn a language file into its aterm representation
@@ -59,7 +56,7 @@ lang: $(LANG_ARCHIVE) sunshine
 #%.result: %.$(LANG_EXT) src/
 #	@./tests/run $< | tee $@ | grep -i "failure\|success"
 
-test: $(TEST_ATERMS) sunshine
+test: $(TEST_ATERMS) sunshine $(LANG_ARCHIVE)
 	@./tests/run $(SUNSHINE_JAR) $(LANG_DIR) $^
 
 #test-results: 
