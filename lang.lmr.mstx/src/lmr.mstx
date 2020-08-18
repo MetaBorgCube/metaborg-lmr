@@ -2,7 +2,7 @@ import stdlib.paths
 import stdlib.sets
 
 main(p) :- p match
-  { Program(h, ds) -> {s}
+  { Program(h, ds):[] -> {s}
       new s,
       decls(s, ds)
   }.
